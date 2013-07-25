@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project default="all" name="SendSMSTelcoService">
+    <target name="init">
+        <path id="slee">
+            <pathelement location="lib/slee.jar"/>
+        </path>
+        <taskdef classname="org.mobicents.eclipslee.ant.SbbJar"
+            classpath="lib/slee-tasks.jar" name="sbbjar"/>
+        <taskdef classname="org.mobicents.eclipslee.ant.EventJar"
+            classpath="lib/slee-tasks.jar" name="eventjar"/>
+        <taskdef classname="org.mobicents.eclipslee.ant.ProfileSpecJar"
+            classpath="lib/slee-tasks.jar" name="profilespecjar"/>
+        <taskdef classname="org.mobicents.eclipslee.ant.DeployableJar"
+            classpath="lib/slee-tasks.jar" name="deployablejar"/>
+        <taskdef
+            classname="org.mobicents.eclipslee.ant.ResourceAdaptorTypeJar"
+            classpath="lib/slee-tasks.jar" name="resourceadaptortypejar"/>
+        <taskdef
+            classname="org.mobicents.eclipslee.ant.ResourceAdaptorJar"
+            classpath="lib/slee-tasks.jar" name="resourceadaptorjar"/>
+        <path id="ExternalComponents">
+            <pathelement location="lib/DU/http-client-ra-DU-2.5.0.FINAL-Eclipslee.jar/jars/http-client-events-2.5.0.FINAL.jar"/>
+            <pathelement location="lib/DU/http-client-ra-DU-2.5.0.FINAL-Eclipslee.jar/jars/http-client-library-2.5.0.FINAL.jar"/>
+            <pathelement location="lib/DU/http-client-ra-DU-2.5.0.FINAL-Eclipslee.jar/jars/http-client-ra-2.5.0.FINAL.jar"/>
+            <pathelement location="lib/DU/http-client-ra-DU-2.5.0.FINAL-Eclipslee.jar/jars/http-client-ratype-2.5.0.FINAL.jar"/>
+            <pathelement location="lib/DU/http-client-ra-DU-2.5.0.FINAL-Eclipslee.jar/jars/httpclient-4.1.2.jar"/>
+            <pathelement location="lib/DU/http-client-ra-DU-2.5.0.FINAL-Eclipslee.jar/jars/httpcore-4.1.3.jar"/>
+        </path>
+        <path id="path-SendSMS-sbb">
+            <pathelement location="/home/julian/Telcomp-Workspace/SendSMSTelcoService/jars/EndSendSMSTelcoService-event.jar"/>
+            <pathelement location="/home/julian/Telcomp-Workspace/SendSMSTelcoService/jars/StartSendSMSTelcoService-event.jar"/>
+            <pathelement location="/home/julian/Telcomp-Workspace/SendSMSTelcoService/lib/DU/http-client-ra-DU-2.5.0.FINAL-Eclipslee.jar/jars/http-client-events-2.5.0.FINAL.jar"/>
+        </path>
+    </target>
+    <target depends="init" name="all">
+        <ant target="build-StartSendSMSTelcoService-event"/>
+        <ant target="build-EndSendSMSTelcoService-event"/>
+        <ant target="build-SendSMS-sbb"/>
+        <ant target="build-sendsms-DU"/>
+    </target>
+    <target depends="init" name="clean">
+        <ant target="clean-StartSendSMSTelcoService-event"/>
+        <ant target="clean-EndSendSMSTelcoService-event"/>
+        <ant target="clean-SendSMS-sbb"/>
+        <ant target="clean-sendsms-DU"/>
+    </target>
+    <target depends="init" name="build-StartSendSMSTelcoService-event">
+        <mkdir dir="classes/StartSendSMSTelcoService-event"/>
+        <mkdir dir="jars/"/>
+        <javac destdir="classes/StartSendSMSTelcoService-event"
+            includes="org/telcomp/events/StartSendSMSTelcoServiceEvent.java" srcdir="src">
+            <classpath>
+                <path refid="slee"/>
+            </classpath>
+        </javac>
+        <eventjar classpath="classes/StartSendSMSTelcoService-event"
+            destfile="jars/StartSendSMSTelcoService-event.jar" eventjarxml="src/org/telcomp/events/StartSendSMSTelcoService-event-jar.xml"/>
+    </target>
+    <target name="clean-StartSendSMSTelcoService-event">
+        <delete file="jars/StartSendSMSTelcoService-event.jar"/>
+        <delete dir="classes/StartSendSMSTelcoService-event"/>
+    </target>
+    <target depends="init" name="build-EndSendSMSTelcoService-event">
+        <mkdir dir="classes/EndSendSMSTelcoService-event"/>
+        <mkdir dir="jars/"/>
+        <javac destdir="classes/EndSendSMSTelcoService-event"
+            includes="org/telcomp/events/EndSendSMSTelcoServiceEvent.java" srcdir="src">
+            <classpath>
+                <path refid="slee"/>
+            </classpath>
+        </javac>
+        <eventjar classpath="classes/EndSendSMSTelcoService-event"
+            destfile="jars/EndSendSMSTelcoService-event.jar" eventjarxml="src/org/telcomp/events/EndSendSMSTelcoService-event-jar.xml"/>
+    </target>
+    <target name="clean-EndSendSMSTelcoService-event">
+        <delete file="jars/EndSendSMSTelcoService-event.jar"/>
+        <delete dir="classes/EndSendSMSTelcoService-event"/>
+    </target>
+    <target depends="init" name="build-SendSMS-sbb">
+        <mkdir dir="classes/SendSMS-sbb"/>
+        <mkdir dir="jars/"/>
+        <javac destdir="classes/SendSMS-sbb"
+            includes="org/telcomp/sbb/SendSMSSbb.java" srcdir="src">
+            <classpath>
+                <path refid="path-SendSMS-sbb"/>
+                <path refid="ExternalComponents"/>
+                <path refid="slee"/>
+            </classpath>
+        </javac>
+        <sbbjar classpath="classes/SendSMS-sbb"
+            destfile="jars/SendSMS-sbb.jar" sbbjarxml="src/org/telcomp/sbb/SendSMS-sbb-jar.xml"/>
+    </target>
+    <target name="clean-SendSMS-sbb">
+        <delete file="jars/SendSMS-sbb.jar"/>
+        <delete dir="classes/SendSMS-sbb"/>
+    </target>
+    <target
+        depends="build-SendSMS-sbb,build-EndSendSMSTelcoService-event,build-StartSendSMSTelcoService-event" name="build-sendsms-DU">
+        <mkdir dir="classes/sendsms-DU"/>
+        <copy file="src/org/telcomp/service/sendsms-deployable-unit.xml" tofile="classes/sendsms-DU/deployable-unit.xml"/>
+        <jar jarfile="jars/sendsms-DU.jar">
+            <metainf dir="classes/sendsms-DU" includes="deployable-unit.xml"/>
+            <fileset dir="" includes="jars/SendSMS-sbb.jar"/>
+            <fileset dir="" includes="jars/EndSendSMSTelcoService-event.jar"/>
+            <fileset dir="" includes="jars/StartSendSMSTelcoService-event.jar"/>
+            <fileset dir="." includes="src/org/telcomp/service/sendsms-service.xml"/>
+        </jar>
+    </target>
+    <target name="clean-sendsms-DU">
+        <delete file="jars/sendsms-DU.jar"/>
+        <delete dir="classes/sendsms-DU"/>
+    </target>
+</project>
