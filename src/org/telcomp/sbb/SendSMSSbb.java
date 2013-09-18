@@ -20,6 +20,11 @@ public abstract class SendSMSSbb implements javax.slee.Sbb {
 	
 
 	public void onStartSendSMSTelcoServiceEvent(StartSendSMSTelcoServiceEvent event, ActivityContextInterface aci) {
+		System.out.println("*******************************************");
+		System.out.println("SendSMSTelcoService Invoked");
+		System.out.println("Input Phone = "+event.getPhone());
+		System.out.println("Input Message = "+event.getMessage());
+		
 		String message = event.getMessage();
 		String phone = event.getPhone();
 		if(this.sendSMS(message, phone)){
@@ -28,12 +33,16 @@ public abstract class SendSMSSbb implements javax.slee.Sbb {
 			EndSendSMSTelcoServiceEvent endSMS = new EndSendSMSTelcoServiceEvent(operationInputs);
 			this.fireEndSendSMSTelcoServiceEvent(endSMS, aci, null);
 			aci.detach(this.sbbContext.getSbbLocalObject());
+			System.out.println("Output smsSent = true");
+			System.out.println("*******************************************");
 		} else{
 			HashMap<String, Object> operationInputs = new HashMap<String, Object>();
 			operationInputs.put("smsSent", (String) "false");
 			EndSendSMSTelcoServiceEvent endSMS = new EndSendSMSTelcoServiceEvent(operationInputs);
 			this.fireEndSendSMSTelcoServiceEvent(endSMS, aci, null);
 			aci.detach(this.sbbContext.getSbbLocalObject());
+			System.out.println("Output smsSent = false");
+			System.out.println("*******************************************");
 		}
 	}
 	
